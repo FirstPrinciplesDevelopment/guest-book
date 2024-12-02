@@ -12,4 +12,8 @@ Run `cd jsbuild` and `npm run tailwind-watch`.
 
 Install python dependencies with `pip install -r requirements.txt`.
 
+Set up database and apply migrations with `python manage.py migrate`.
+
+Create an admin with `python manage.py creatsuperuser`.
+
 Then run the Django development server as usual `python manage.py runserver`.

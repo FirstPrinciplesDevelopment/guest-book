@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "polls/base.html" %}
 
 {% block content %}
 
@@ -6,14 +6,17 @@
     <form action="{% url 'polls:vote' question.id %}" method="post">
         {% csrf_token %}
         <fieldset>
-            <legend class="mx-auto text-lg p-4"><h1>{{ question.question_text }}</h1></legend>
+            <legend class="mx-auto text-lg p-4">
+                <h1>{{ question.question_text }}</h1>
+            </legend>
 
             <div class="mx-auto max-w-fit">
                 {% for choice in question.choice_set.all %}
                 <div class="form-control">
                     <label class="label cursor-pointer" for="choice{{ forloop.counter }}">
                         <span class="label-text text-lg mx-4">{{ choice.choice_text }}</span>
-                        <input type="radio" class="radio radio-secondary" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                        <input type="radio" class="radio radio-secondary" name="choice" id="choice{{ forloop.counter }}"
+                            value="{{ choice.id }}">
                     </label><br>
                 </div>
                 {% endfor %}
