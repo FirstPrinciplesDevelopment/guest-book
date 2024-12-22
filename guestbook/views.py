@@ -3,7 +3,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db import connection
 
-from .models import Visit, Visitor
+from .models import Visit, Visitor, AvatarImage
 
 
 def midnight_today():
@@ -38,9 +38,17 @@ def visitors_since(datetime):
         return dictfetchall(cursor=cursor)
 
 
-def dashboard(request):
+def avatars():
+    return AvatarImage.objects.all()[:12]
+
+
+def base_context():
     # TODO: make location name dynamic.
     location = "CalsZone"
+    return {"location": location, "avatars": avatars()}
+
+
+def dashboard(request):
     # TODO: make dynamic.
     join_code = "XHQNZS"
     todays_visitors = visitors_since(midnight_today())
@@ -51,22 +59,21 @@ def dashboard(request):
         request,
         "guestbook/dashboard.html",
         {
-            "location": location,
             "join_code": join_code,
             "visitors": {
                 "today": todays_visitors,
                 "week": weeks_visitors,
                 "month": months_visitors,
             },
+            **base_context(),
         },
     )
 
 
 def join(request):
-    context = {}
-    return render(request, "guestbook/join.html", context=context)
+    return render(request, "guestbook/join.html", context=base_context())
 
 
 def join_with_code(request, join_code: str):
     context = {"code": join_code}
-    return render(request, "guestbook/join.html", context=context)
+    return render(request, "guestbook/join.html", context=base_context())

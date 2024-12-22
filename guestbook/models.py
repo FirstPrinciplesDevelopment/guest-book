@@ -18,3 +18,10 @@ class Visit(models.Model):
 
     def __str__(self) -> str:
         return self.visit_datetime.isoformat()
+
+
+class AvatarImage(models.Model):
+    url = models.URLField()
+
+    def __str__(self):
+        return self.url

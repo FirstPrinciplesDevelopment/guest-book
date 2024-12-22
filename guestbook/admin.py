@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Visit, Visitor
+from .models import Visit, Visitor, AvatarImage
 
 
 class VisitAdmin(admin.ModelAdmin):
@@ -10,3 +10,4 @@ class VisitAdmin(admin.ModelAdmin):
 
 admin.site.register(Visit, VisitAdmin)
 admin.site.register(Visitor)
+admin.site.register(AvatarImage)
