@@ -1,6 +1,10 @@
 {% extends "guestbook/base.html" %}
 
+{% load static %}
+
 {% block content %}
+<!-- Form Interactivity -->
+<script src="{% static 'guestbook/js/join.js' %}"></script>
 
 <div class="container min-w-72 mx-auto my-auto min-h-screen flex justify-center items-center">
     <div class="">
@@ -9,7 +13,7 @@
             <form>
                 <div class="flex flex-col justify-center items-center">
                     <!-- Join Code Input -->
-                    <div class="px-8 py-2">
+                    <div class="px-8 py-2 w-80">
                         <label class="form-control w-full max-w-xs">
                             <div class="label">
                                 <span class="label-text">Join Code</span>
@@ -24,17 +28,20 @@
                         </label>
                     </div>
                     <!-- Name Input -->
-                    <div class="px-8 py-2">
-                        <label class="form-control w-full max-w-xs">
+                    <div class="px-8 py-2 w-80">
+                        <label class="form-control max-w-xs">
                             <div class="label">
                                 <span class="label-text">Name</span>
                             </div>
-                            <input type="text" placeholder="Enter Name"
-                                class="input input-bordered input-primary w-full max-w-xs" />
+                            <div class="flex items-end">
+                                <input id="name-input" name="name-input" type="text" placeholder="Enter Name"
+                                    class="input input-bordered input-primary w-full max-w-xs" readonly />
+                                <button type="button" id="shuffle-name-button" class="text-3xl ml-2 my-auto">🔀</button>
+                            </div>
                         </label>
                     </div>
                     <!-- Avatar Input -->
-                    <div class="px-8 py-2">
+                    <div class="px-8 py-2 w-80">
                         <label class="form-control w-full max-w-xs">
                             <div class="label">
                                 <span class="label-text">Avatar</span>
