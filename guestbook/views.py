@@ -76,4 +76,11 @@ def join(request):
 
 def join_with_code(request, join_code: str):
     context = {"code": join_code}
-    return render(request, "guestbook/join.html", context=base_context())
+    return render(
+        request,
+        "guestbook/join.html",
+        context={
+            "join_code": join_code,
+            **base_context(),
+        },
+    )
