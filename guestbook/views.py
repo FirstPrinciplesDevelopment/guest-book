@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from datetime import timedelta
 from django.db import connection
@@ -70,17 +71,37 @@ def dashboard(request):
     )
 
 
-def join(request):
-    return render(request, "guestbook/join.html", context=base_context())
+def index(request, visitor_id: int = None):
+    # TODO: if visitor visited since midnight today, show page with stats.
+    # TODO: otherwise, redirect to join? Or maybe just show a prominent join button?
+    context = base_context()
+
+    if visitor_id:
+        visitor = Visitor.objects.get(id=visitor_id)
+        context["visitor"] = visitor
+
+    return render(request, "guestbook/index.html", context=context)
 
 
-def join_with_code(request, join_code: str):
-    context = {"code": join_code}
-    return render(
-        request,
-        "guestbook/join.html",
-        context={
-            "join_code": join_code,
-            **base_context(),
-        },
-    )
+def join(request, join_code: str = None, visitor_id: int = None):
+    if request.method == "POST":
+        # Handle POST.
+        data = request.POST
+        code = data.get("code")
+        name = data.get("name")
+        avatar_url = data.get("avatar_url")
+        # Check join code against current code for current timestep and next timestep.
+
+        # Create and persist visitor.
+        visitor = Visitor(name=name, avatar_url=avatar_url)
+        visitor.save()
+        # TODO: maybe render the template directly from this view?
+        return redirect("guestbook:stats", visitor_id=visitor.id)
+    else:
+        # Handle GET.
+        context = base_context()
+        if join_code:
+            context["join_code"] = join_code
+        if visitor_id:
+            context["visitor"] = Visitor.objects.get(id=visitor_id)
+        return render(request, "guestbook/join.html", context=context)

@@ -52,8 +52,8 @@
                                 {% for a in avatars %}
                                 <div
                                     class="peer relative place-self-center justify-self-center peer-has-[>input:checked]:opacity-50 has-[~div>input:checked]:opacity-50">
-                                    <input required id="avatar-{{a.id}}" name="avatar" value="{{a.id}}" type="radio"
-                                        class="peer absolute top-1/2 left-1/2 z-0">
+                                    <input required id="avatar-{{a.id}}" name="avatar_url" value="{{a.url}}"
+                                        type="radio" class="peer absolute top-1/2 left-1/2 z-0">
                                     <label for="avatar-{{a.id}}"
                                         class="relative peer-checked:ring-4 peer-checked:ring-primary rounded-full block text-sm font-medium">
                                         <div
@@ -70,7 +70,7 @@
 
                     <!-- Join Button -->
                     <div class="px-8 my-8">
-                        <button class="btn btn-outline btn-primary sm:btn-md md:btn-lg min-w-32 text-lg">Join</button>
+                        <button class="btn btn-outline btn-primary btn-md min-w-32 text-lg">Join</button>
                     </div>
                 </div>
 
