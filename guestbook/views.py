@@ -3,8 +3,14 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from datetime import timedelta
 from django.db import connection
+from django.conf import settings
 
 from .models import Visit, Visitor, AvatarImage
+from .totp import totp, totp_offset
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def midnight_today():
@@ -39,6 +45,16 @@ def visitors_since(datetime):
         return dictfetchall(cursor=cursor)
 
 
+def get_current_totp():
+    return totp(settings.TOTP_SECRET, settings.TOTP_TIMESTEP)
+
+
+def get_previous_totp():
+    return totp_offset(
+        settings.TOTP_SECRET, settings.TOTP_TIMESTEP, settings.TOTP_TIMESTEP
+    )
+
+
 def avatars():
     return AvatarImage.objects.all()[:12]
 
@@ -50,8 +66,7 @@ def base_context():
 
 
 def dashboard(request):
-    # TODO: make dynamic.
-    join_code = "XHQNZS"
+    join_code = get_current_totp()
     todays_visitors = visitors_since(midnight_today())
     weeks_visitors = visitors_since(midnight_today() - timedelta(days=7))
     months_visitors = visitors_since(midnight_today() - timedelta(days=30))
@@ -91,12 +106,25 @@ def join(request, join_code: str = None, visitor_id: int = None):
         name = data.get("name")
         avatar_url = data.get("avatar_url")
         # Check join code against current code for current timestep and next timestep.
+        if code == get_current_totp() or code == get_previous_totp():
 
-        # Create and persist visitor.
-        visitor = Visitor(name=name, avatar_url=avatar_url)
-        visitor.save()
-        # TODO: maybe render the template directly from this view?
-        return redirect("guestbook:stats", visitor_id=visitor.id)
+            # Create and persist visitor.
+            visitor = Visitor(name=name, avatar_url=avatar_url)
+            visitor.save()
+            # Create and persist visit.
+            visit = Visit(visitor=visitor)
+            visit.save()
+            # TODO: maybe render the template directly from this view?
+            return redirect("guestbook:stats", visitor_id=visitor.id)
+        else:
+            # Invalid code.
+            context = {
+                "notifications": [{"type": "error", "message": "Invalid join code."}],
+                **base_context(),
+            }
+            if visitor_id:
+                context["visitor"] = Visitor.objects.get(id=visitor_id)
+            return render(request, "guestbook/join.html", context=context)
     else:
         # Handle GET.
         context = base_context()

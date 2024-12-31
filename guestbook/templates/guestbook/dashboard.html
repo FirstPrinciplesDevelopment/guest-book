@@ -1,6 +1,10 @@
 {% extends "guestbook/base.html" %}
 
+{% load static %}
+
 {% block content %}
+
+<script src="{% static 'guestbook/js/dashboard.js' %}"></script>
 
 <div class="container min-w-72 mx-auto my-auto min-h-screen grid gap-8 grid-cols-3 justify-center items-center">
     <div class="">
@@ -30,11 +34,12 @@
                 <div class="card rounded-box grid h-20 place-items-center">
                     <div class="text-lg mx-auto">
                         <!-- TODO: remove hard-coded URL. -->
-                        Visit <a href="http://localhost:8000/join" class="underline text-red-500">localhost/join</a>
+                        Visit <a href="http://localhost:8000/join" class="underline text-secondary">localhost/join</a>
                         and
                         enter
-                        <strong class="text-red-500">{{ join_code }}</strong>.
+                        <strong class="text-secondary">{{ join_code }}</strong>.
                     </div>
+                    <progress id="countdown" class="progress progress-secondary w-80" value="30" max="30"></progress>
                 </div>
             </div>
         </div>

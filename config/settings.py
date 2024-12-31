@@ -29,6 +29,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Used to generate the join code, should be a random base-32 string.
+TOTP_SECRET = "LE3VKVZYGEZFGSSJJNNECQSHGQZTSR2WINFDAT2MIRGTKVSG"
+
+# How often, in seconds, to update the join code.
+TOTP_TIMESTEP = 30
 
 # Application definition
 

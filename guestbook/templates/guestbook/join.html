@@ -4,9 +4,20 @@
 
 {% block content %}
 <!-- Form Interactivity -->
-<script src="{% static 'guestbook/js/join.js' %}"></script>
+{% load static %}
 
 <div class="container min-w-72 mx-auto my-auto min-h-screen flex justify-center items-center">
+    {% if notifications %}
+    {% for notification in notifications %}
+    <div>
+        <div class="toast toast-top toast-center">
+            <div class="alert alert-error">
+                <span class="min-w-48 text-lg">{{notification.message}}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
     <div class="">
         <div class="mx-auto flex flex-col">
             <h1 class="text-5xl mx-auto m-8">{{ location }}</h1>
