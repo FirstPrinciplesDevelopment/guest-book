@@ -6,6 +6,8 @@
 <!-- Form Interactivity -->
 {% load static %}
 
+<script src="{% static 'guestbook/js/join.js' %}"></script>
+
 <div class="container min-w-72 mx-auto my-auto min-h-screen flex justify-center items-center">
     {% if notifications %}
     {% for notification in notifications %}

@@ -11,6 +11,7 @@
         <div class="mx-auto flex flex-col">
             <h1 class="text-5xl mx-auto m-8">{{ location }}</h1>
 
+            {% if user.is_active and user.is_superuser %}
             <div class="flex w-full px-8 flex-col border-opacity-50">
                 <div class="card rounded-box grid h-48 place-items-center">
                     <p class="text-lg mx-auto">Scan to join</p>
@@ -42,6 +43,8 @@
                     <progress id="countdown" class="progress progress-secondary w-80" value="30" max="30"></progress>
                 </div>
             </div>
+            {% endif %}
+
         </div>
     </div>
 

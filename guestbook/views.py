@@ -133,3 +133,14 @@ def join(request, join_code: str = None, visitor_id: int = None):
         if visitor_id:
             context["visitor"] = Visitor.objects.get(id=visitor_id)
         return render(request, "guestbook/join.html", context=context)
+
+
+def get_join_code(request):
+    print(f"user: {request.user}")
+    if request.user.is_superuser and request.user.is_active:
+        content = '{"code":"' + get_current_totp() + '"}'
+        return HttpResponse(content, content_type="application/json")
+    elif request.user.is_authenticated:
+        return HttpResponse("Forbidden", status=403)
+    else:
+        return HttpResponse("Unauthorized", status=401)
