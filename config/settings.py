@@ -27,6 +27,8 @@ SECRET_KEY = "django-insecure-)&0s74n4ytwpk@r5mdo=!!u5ggsmrr1qdl+yav4s3_oi3gc=-z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+BASE_URL = "http://localhost:8000"
+
 ALLOWED_HOSTS = []
 
 # Used to generate the join code, should be a random base-32 string.

@@ -14,5 +14,8 @@ urlpatterns = [
     path("join/", views.join, name="join"),
     # Join view with join code URL parameter.
     path("join/<str:join_code>/", views.join, name="join_with_code"),
+    # Json endpoint for join code.
     path("refresh-code/", views.get_join_code, name="refresh_code"),
+    # HTML partial to update visitors section on dashboard.
+    path("visitors-partial/", views.get_visitors_partial, name="visitors_partial"),
 ]

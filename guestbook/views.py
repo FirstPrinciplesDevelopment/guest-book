@@ -9,6 +9,8 @@ from .models import Visit, Visitor, AvatarImage
 from .totp import totp, totp_offset
 
 import logging
+import time
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +55,20 @@ def get_previous_totp():
     return totp_offset(
         settings.TOTP_SECRET, settings.TOTP_TIMESTEP, settings.TOTP_TIMESTEP
     )
+
+
+def get_join_url():
+    return f"{settings.BASE_URL}/join/"
+
+
+def get_time_step():
+    return settings.TOTP_TIMESTEP
+
+
+def seconds_remaining(time_step: int = 30, offset: int = 0) -> int:
+    """Given a timestep and offset, calculate how many seconds until the TOTP will change."""
+    seconds_elapsed = int((time.time() + offset) % time_step)
+    return time_step - seconds_elapsed
 
 
 def avatars():
@@ -138,8 +154,37 @@ def join(request, join_code: str = None, visitor_id: int = None):
 def get_join_code(request):
     print(f"user: {request.user}")
     if request.user.is_superuser and request.user.is_active:
-        content = '{"code":"' + get_current_totp() + '"}'
-        return HttpResponse(content, content_type="application/json")
+        data = {
+            "code": get_current_totp(),
+            "step": get_time_step(),
+            "remaining": seconds_remaining(),
+            "url": get_join_url(),
+        }
+        json_str = json.dumps(data)
+        return HttpResponse(json_str, content_type="application/json")
+    elif request.user.is_authenticated:
+        return HttpResponse("Forbidden", status=403)
+    else:
+        return HttpResponse("Unauthorized", status=401)
+
+
+def get_visitors_partial(request):
+    if request.user.is_superuser and request.user.is_active:
+        todays_visitors = visitors_since(midnight_today())
+        weeks_visitors = visitors_since(midnight_today() - timedelta(days=7))
+        months_visitors = visitors_since(midnight_today() - timedelta(days=30))
+        return render(
+            request,
+            "guestbook/visitors.partial.html",
+            {
+                "visitors": {
+                    "today": todays_visitors,
+                    "week": weeks_visitors,
+                    "month": months_visitors,
+                },
+                **base_context(),
+            },
+        )
     elif request.user.is_authenticated:
         return HttpResponse("Forbidden", status=403)
     else:
