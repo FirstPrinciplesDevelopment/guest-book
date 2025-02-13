@@ -6,8 +6,6 @@ app_name = "guestbook"
 urlpatterns = [
     # Index view.
     path("", views.index, name="index"),
-    # Stats view.
-    path("stats/<int:visitor_id>/", views.index, name="stats"),
     # Dashboard view.
     path("dashboard/", views.dashboard, name="dashboard"),
     # Join view.

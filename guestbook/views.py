@@ -5,6 +5,8 @@ from datetime import timedelta
 from django.db import connection
 from django.conf import settings
 
+from guestbook.services.visitors_service import generate_name
+
 from .models import Visit, Visitor, AvatarImage
 from .totp import totp, totp_offset
 
@@ -13,6 +15,10 @@ import time
 import json
 
 logger = logging.getLogger(__name__)
+
+
+def build_notification(status: str, message: str) -> dict:
+    return {"type": status, "message": message}
 
 
 def midnight_today():
@@ -102,14 +108,13 @@ def dashboard(request):
     )
 
 
-def index(request, visitor_id: int = None):
+def index(request, notifications: dict = None):
     # TODO: if visitor visited since midnight today, show page with stats.
     # TODO: otherwise, redirect to join? Or maybe just show a prominent join button?
-    context = base_context()
-
-    if visitor_id:
-        visitor = Visitor.objects.get(id=visitor_id)
-        context["visitor"] = visitor
+    context = {
+        "notifications": notifications,
+        **base_context(),
+    }
 
     return render(request, "guestbook/index.html", context=context)
 
@@ -130,12 +135,18 @@ def join(request, join_code: str = None, visitor_id: int = None):
             # Create and persist visit.
             visit = Visit(visitor=visitor)
             visit.save()
-            # TODO: maybe render the template directly from this view?
-            return redirect("guestbook:stats", visitor_id=visitor.id)
+            # Redirect to the index page with a welcome notification.
+            context = {
+                "notifications": [
+                    build_notification("success", "Thanks for visiting!")
+                ],
+                **base_context(),
+            }
+            return render(request, "guestbook/index.html", context=context)
         else:
             # Invalid code.
             context = {
-                "notifications": [{"type": "error", "message": "Invalid join code."}],
+                "notifications": [build_notification("error", "Invalid join code.")],
                 **base_context(),
             }
             if visitor_id:

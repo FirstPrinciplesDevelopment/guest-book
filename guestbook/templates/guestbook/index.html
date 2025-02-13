@@ -7,16 +7,16 @@
 <script src="{% static 'guestbook/js/index.js' %}"></script>
 
 <div class="container min-w-72 mx-auto my-auto min-h-screen flex justify-center items-center">
-    <h1>This is the index page.</h1>
-    {% if visitor %}
-    <div class="px-2 flex-row mx-auto">
-        <img src="{{ visitor.avatar_url }}" alt="avatar for {{ visitor.name }}"
-            class="w-24 h-24 ring-2 ring-primary object-cover rounded-full mx-auto">
-        <div class=" py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-            {{ visitor.name }}
-        </div>
+
+    <div class="flex flex-col justify-center items-center">
+        <h1 class="text-5xl mx-auto m-8">{{ location }} Guest Book</h1>
+        {% if user.is_active and user.is_superuser %}
+        <a href="/dashboard/" class="text-secondary"><span class="underline">Dashboard</span>→</a>
+        {% else %}
+        <a href="/join/" class="text-secondary"><span class="underline">Join</span>→</a>
+        {% endif %}
     </div>
-    {% endif %}
+
 </div>
 
 
