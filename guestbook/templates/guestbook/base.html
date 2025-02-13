@@ -12,8 +12,27 @@
 </head>
 
 <body>
+
+    <!-- Notifications -->
+    {% if notifications %}
+    {% for notification in notifications %}
+    <div class="toast toast-top toast-center">
+        {% if notification.type == "error" %}
+        <div class="alert alert-error">
+            <span class="min-w-48 text-lg">{{notification.message}}</span>
+        </div>
+        {% elif notification.type == "success" %}
+        <div class="alert alert-success min-w-48 flex">
+            <span class="text-lg justify-center">{{notification.message}}</span>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
     {% block content %}
     {% endblock %}
+
 </body>
 
 </html>
