@@ -18,6 +18,7 @@ class Command(BaseCommand):
             image_dir = os.path.join(
                 settings.BASE_DIR, "guestbook", "static", "guestbook", "images"
             )
+            images_processed = 0
             for triple in os.walk(image_dir):
                 # Unpack 3-tuple of dirpath, dirnames, filenames.
                 (dirpath, _, filenames) = triple
@@ -28,6 +29,13 @@ class Command(BaseCommand):
                     # Save to the database.
                     image = AvatarImage(url=file_url)
                     image.save()
+                    # Increment counter.
+                    images_processed += 1
 
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Saved {images_processed} image URLs to the database."
+                )
+            )
         except:
             raise CommandError("Error processing images.")

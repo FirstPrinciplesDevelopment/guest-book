@@ -16,4 +16,6 @@ Set up database and apply migrations with `python manage.py migrate`.
 
 Create an admin with `python manage.py creatsuperuser`.
 
+Put your images in ./guestbook/static/images/ and then run `python manage.py processimages`.
+
 Then run the Django development server as usual `python manage.py runserver`.
