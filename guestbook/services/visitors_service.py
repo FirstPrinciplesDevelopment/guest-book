@@ -357,6 +357,25 @@ def capitalize(s: str) -> str:
     return s[:1].upper() + s[1:]
 
 
+def validate_name(fullname: str) -> bool:
+    """
+    Validates that a given string is a valid name.
+    This can be used to prevent abuse (e.g. a user submitting a name outside the approved list).
+    """
+    # Split fullname on whitespace.
+    parts = fullname.split()
+    # There should be two parts, adjective and name.
+    if len(parts) == 2:
+        # Split and lowercase.
+        adjective = parts[0].lower()
+        name = parts[1].lower()
+        # Validate that name and adjective are from the lists.
+        if adjective in ADJECTIVES and name in NAMES:
+            return True
+    # If we made it this far, name is invalid.
+    return False
+
+
 def visitor_exists(name: str) -> bool:
     with connection.cursor() as cursor:
         cursor.execute(

@@ -16,4 +16,6 @@ urlpatterns = [
     path("refresh-code/", views.get_join_code, name="refresh_code"),
     # HTML partial to update visitors section on dashboard.
     path("visitors-partial/", views.get_visitors_partial, name="visitors_partial"),
+    # Json endpoint for random name generation.
+    path("name/", views.get_name, name="name"),
 ]

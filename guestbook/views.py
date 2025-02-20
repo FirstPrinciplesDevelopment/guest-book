@@ -200,3 +200,10 @@ def get_visitors_partial(request):
         return HttpResponse("Forbidden", status=403)
     else:
         return HttpResponse("Unauthorized", status=401)
+
+
+def get_name(request):
+    print("get_name")
+    data = {"name": generate_name()}
+    json_str = json.dumps(data)
+    return HttpResponse(json_str, content_type="application/json")
