@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.db import connection
 from django.conf import settings
 
-from guestbook.services.visitors_service import generate_name
+from guestbook.services.visitors_service import generate_name, validate_name
 
 from .models import Visit, Visitor, AvatarImage
 from .totp import totp, totp_offset
@@ -128,21 +128,28 @@ def join(request, join_code: str = None, visitor_id: int = None):
         avatar_url = data.get("avatar_url")
         # Check join code against current code for current timestep and next timestep.
         if code == get_current_totp() or code == get_previous_totp():
-
-            # Create and persist visitor.
-            visitor = Visitor(name=name, avatar_url=avatar_url)
-            visitor.save()
-            # Create and persist visit.
-            visit = Visit(visitor=visitor)
-            visit.save()
-            # Redirect to the index page with a welcome notification.
-            context = {
-                "notifications": [
-                    build_notification("success", "Thanks for visiting!")
-                ],
-                **base_context(),
-            }
-            return render(request, "guestbook/index.html", context=context)
+            # Validate name.
+            if validate_name(name):
+                # Create and persist visitor.
+                visitor = Visitor(name=name, avatar_url=avatar_url)
+                visitor.save()
+                # Create and persist visit.
+                visit = Visit(visitor=visitor)
+                visit.save()
+                # Redirect to the index page with a welcome notification.
+                context = {
+                    "notifications": [
+                        build_notification("success", "Thanks for visiting!")
+                    ],
+                    **base_context(),
+                }
+                return render(request, "guestbook/index.html", context=context)
+            else:
+                context = {
+                    "notifications": [build_notification("error", "Invalid name.")],
+                    **base_context(),
+                }
+                return render(request, "guestbook/join.html", context=context)
         else:
             # Invalid code.
             context = {
