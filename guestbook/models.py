@@ -21,6 +21,11 @@ class Visit(models.Model):
 
 
 class AvatarImage(models.Model):
+    def __init__(self, id, url):
+        super().__init__()
+        self.id = id
+        self.url = url
+
     url = models.URLField()
 
     def __str__(self):

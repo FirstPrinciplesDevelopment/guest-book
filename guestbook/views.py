@@ -5,7 +5,11 @@ from datetime import timedelta
 from django.db import connection
 from django.conf import settings
 
-from guestbook.services.visitors_service import generate_name, validate_name
+from guestbook.services.visitors_service import (
+    generate_name,
+    validate_name,
+    random_avatars,
+)
 
 from .models import Visit, Visitor, AvatarImage
 from .totp import totp, totp_offset
@@ -77,14 +81,10 @@ def seconds_remaining(time_step: int = 30, offset: int = 0) -> int:
     return time_step - seconds_elapsed
 
 
-def avatars():
-    return AvatarImage.objects.all()[:12]
-
-
 def base_context():
     # TODO: make location name dynamic.
     location = "CalsZone"
-    return {"location": location, "avatars": avatars()}
+    return {"location": location, "avatars": random_avatars()}
 
 
 def dashboard(request):
@@ -170,7 +170,6 @@ def join(request, join_code: str = None, visitor_id: int = None):
 
 
 def get_join_code(request):
-    print(f"user: {request.user}")
     if request.user.is_superuser and request.user.is_active:
         data = {
             "code": get_current_totp(),
@@ -210,7 +209,6 @@ def get_visitors_partial(request):
 
 
 def get_name(request):
-    print("get_name")
     data = {"name": generate_name()}
     json_str = json.dumps(data)
     return HttpResponse(json_str, content_type="application/json")

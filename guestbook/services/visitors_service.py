@@ -2,6 +2,8 @@ from django.db import connection
 
 import random
 
+from guestbook.models import AvatarImage
+
 NAMES = [
     "agnesi",
     "albattani",
@@ -403,3 +405,21 @@ def generate_name():
         return generate_name()
 
     return fullname
+
+
+def random_avatars(number: int = 12) -> list[AvatarImage]:
+    """
+    Get a list of `number` avatar URLs that have not been used by a visitor yet.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """SELECT a.id, a.url
+                    FROM guestbook_avatarimage a
+                    LEFT JOIN guestbook_visitor v ON a.url = v.avatar_url
+                    WHERE v.id is NULL
+                    LIMIT %s""",
+            [number],
+        )
+        result = cursor.fetchall()
+        # Process resulting list of tuples into list.
+        return [AvatarImage(tup[0], tup[1]) for tup in result]
