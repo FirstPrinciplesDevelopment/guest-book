@@ -6,8 +6,10 @@
             <div class="px-2 flex-row mx-auto">
                 <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
                     class="w-24 h-24 ring-2 ring-primary object-cover rounded-full mx-auto">
-                <div class=" py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-                    {{ v.name }}
+                <div class="py-1 mx-auto flex">
+                    <span class="text-center">
+                        {{ v.name }}
+                    </span>
                 </div>
             </div>
             {% endfor %}
@@ -21,8 +23,10 @@
             <div class="px-2 flex-row mx-auto">
                 <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
                     class="w-16 h-16 ring-2 ring-primary object-cover rounded-full mx-auto">
-                <div class="text-xs py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-                    {{ v.name }}
+                <div class="py-1 mx-auto flex">
+                    <span class="text-center">
+                        {{ v.name }}
+                    </span>
                 </div>
             </div>
             {% endfor %}
@@ -36,11 +40,14 @@
             <div class="px-2 flex-row mx-auto">
                 <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
                     class="w-16 h-16 ring-2 ring-primary object-cover rounded-full mx-auto">
-                <div class="text-xs py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-                    {{ v.name }}
+                <div class="py-1 mx-auto flex">
+                    <span class="text-center">
+                        {{ v.name }}
+                    </span>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+
 </div>

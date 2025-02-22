@@ -38,55 +38,7 @@
     </div>
 
     <div id="visitors-section" class="col-span-2">
-        <div class="pl-8 mx-8">
-            <div class="py-8">
-                <div class="text-4xl pb-4">Visitors Today</div>
-                <div class="grid grid-cols-8 gap-y-4">
-                    {% for v in visitors.today %}
-                    <div class="px-2 flex-row mx-auto">
-                        <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
-                            class="w-24 h-24 ring-2 ring-primary object-cover rounded-full mx-auto">
-                        <div class=" py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-                            {{ v.name }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="py-8">
-                <div class="text-4xl pb-4">Visitors This Week</div>
-                <div class="grid grid-cols-10 gap-y-4">
-                    {% for v in visitors.week %}
-                    <div class="px-2 flex-row mx-auto">
-                        <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
-                            class="w-16 h-16 ring-2 ring-primary object-cover rounded-full mx-auto">
-                        <div
-                            class="text-xs py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-                            {{ v.name }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="py-8">
-                <div class="text-4xl pb-4">Visitors This Month</div>
-                <div class="grid grid-cols-10 gap-y-4">
-                    {% for v in visitors.month %}
-                    <div class="px-2 flex-row mx-auto">
-                        <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
-                            class="w-16 h-16 ring-2 ring-primary object-cover rounded-full mx-auto">
-                        <div
-                            class="text-xs py-1 mx-auto justify-self-center place-self-center self-center justify-center">
-                            {{ v.name }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-        </div>
+        {% include 'guestbook/visitors.partial.html' %}
     </div>
 
 </div>
