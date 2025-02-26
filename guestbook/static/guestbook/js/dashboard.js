@@ -1,4 +1,6 @@
 window.onload = function () {
+    // Global timestamp to keep track of the last time we updated the visitors.
+    var LAST_UPDATE_TS = get_timestamp(30);
 
     // Initialize the QRCode object.
     var qrcode = new QRCode("qrcode", {
@@ -16,7 +18,6 @@ window.onload = function () {
 
     async function refresh() {
         data = await getData();
-        console.log(data);
         const { code, step, remaining, url } = data;
         // Update the countdown indicator.
         progressElement.setAttribute("value", remaining);
@@ -31,7 +32,11 @@ window.onload = function () {
         }
         // Update visitors section.
         var visitorsPartial = await getVisitorsPartial();
-        visitorsSection.innerHTML = visitorsPartial;
+        if (visitorsPartial.length > 0) {
+            visitorsSection.innerHTML = visitorsPartial;
+            // Update the last updated timestamp.
+            LAST_UPDATE_TS = get_timestamp(10);
+        }
     }
 
     // Make the initial call so the data is quickly refreshed.
@@ -40,34 +45,38 @@ window.onload = function () {
     // Refresh the data every second.
     setInterval(refresh, 1000);
 
+    async function getData() {
+        const url = "/refresh-code/";
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const json = await response.json();
+            return json;
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    async function getVisitorsPartial() {
+        const url = `/visitors-partial/${LAST_UPDATE_TS}`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const html = await response.text();
+            return html;
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    function get_timestamp(offset) {
+        // Subtract `offset` seconds to be cautious and account for slow requests.
+        return Math.floor((new Date()).getTime() / 1000) - offset;
+    }
 };
-
-async function getData() {
-    const url = "/refresh-code/";
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-
-        const json = await response.json();
-        return json;
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
-async function getVisitorsPartial() {
-    const url = "/visitors-partial/";
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-
-        const html = await response.text();
-        return html;
-    } catch (error) {
-        console.error(error.message);
-    }
-}

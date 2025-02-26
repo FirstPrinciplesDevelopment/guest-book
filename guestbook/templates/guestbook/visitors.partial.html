@@ -4,7 +4,7 @@
         <div class="grid grid-cols-8 gap-y-4">
             {% for v in visitors.today %}
             <div class="px-2 flex-row mx-auto">
-                <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
+                <img src="{{ v.url }}" alt="avatar for {{ v.name }}"
                     class="w-24 h-24 ring-2 ring-primary object-cover rounded-full mx-auto">
                 <div class="py-1 mx-auto flex">
                     <span class="text-center">
@@ -21,7 +21,7 @@
         <div class="grid grid-cols-10 gap-y-4">
             {% for v in visitors.week %}
             <div class="px-2 flex-row mx-auto">
-                <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
+                <img src="{{ v.url }}" alt="avatar for {{ v.name }}"
                     class="w-16 h-16 ring-2 ring-primary object-cover rounded-full mx-auto">
                 <div class="py-1 mx-auto flex">
                     <span class="text-center">
@@ -38,7 +38,7 @@
         <div class="grid grid-cols-10 gap-y-4">
             {% for v in visitors.month %}
             <div class="px-2 flex-row mx-auto">
-                <img src="{{ v.avatar_url }}" alt="avatar for {{ v.name }}"
+                <img src="{{ v.url }}" alt="avatar for {{ v.name }}"
                     class="w-16 h-16 ring-2 ring-primary object-cover rounded-full mx-auto">
                 <div class="py-1 mx-auto flex">
                     <span class="text-center">

@@ -31,6 +31,19 @@
                             {% endif %}
                         </label>
                     </div>
+                    {% if visitor %}
+                    <div>
+                        <div class="p-2 flex-row mx-auto">
+                            <img src="{{ visitor.avatar.url }}" alt="avatar for {{ visitor.name }}"
+                                class="w-24 h-24 ring-2 ring-primary object-cover rounded-full mx-auto">
+                            <div class="py-1 mx-auto flex">
+                                <span class="text-center">
+                                    {{ visitor.name }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
                     <!-- Name Input -->
                     <div class="px-8 py-2 w-80">
                         <label class="form-control max-w-xs">
@@ -54,8 +67,8 @@
                                 {% for a in avatars %}
                                 <div
                                     class="peer relative place-self-center justify-self-center peer-has-[>input:checked]:opacity-50 has-[~div>input:checked]:opacity-50">
-                                    <input required id="avatar-{{a.id}}" name="avatar_url" value="{{a.url}}"
-                                        type="radio" class="peer absolute top-1/2 left-1/2 z-0">
+                                    <input required id="avatar-{{a.id}}" name="avatar_id" value="{{a.id}}" type="radio"
+                                        class="peer absolute top-1/2 left-1/2 z-0">
                                     <label for="avatar-{{a.id}}"
                                         class="relative peer-checked:ring-4 peer-checked:ring-primary rounded-full block text-sm font-medium">
                                         <div
@@ -69,6 +82,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
 
                     <!-- Join Button -->
                     <div class="px-8 my-8">

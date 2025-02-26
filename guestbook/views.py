@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.utils import timezone
-from datetime import timedelta
+from django.utils.timezone import localtime
 from django.db import connection
 from django.conf import settings
 
@@ -14,6 +13,7 @@ from guestbook.services.visitors_service import (
 from .models import Visit, Visitor, AvatarImage
 from .totp import totp, totp_offset
 
+from datetime import datetime, timedelta, timezone
 import logging
 import time
 import json
@@ -26,9 +26,7 @@ def build_notification(status: str, message: str) -> dict:
 
 
 def midnight_today():
-    midnight_today = timezone.localtime().replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
+    midnight_today = localtime().replace(hour=0, minute=0, second=0, microsecond=0)
     return midnight_today
 
 
@@ -46,8 +44,11 @@ def visitors_since(datetime):
         cursor.execute(
             """SELECT DISTINCT "guestbook_visitor"."id",
                                 "guestbook_visitor"."name",
-                                "guestbook_visitor"."avatar_url"
+                                "guestbook_visitor"."avatar_id",
+                                "guestbook_avatarimage"."url"
                             FROM "guestbook_visitor"
+                            LEFT JOIN "guestbook_avatarimage"
+                                ON ("guestbook_visitor"."avatar_id" = "guestbook_avatarimage"."id")
                             INNER JOIN "guestbook_visit"
                                 ON ("guestbook_visitor"."id" = "guestbook_visit"."visitor_id")
                             WHERE "guestbook_visit"."visit_datetime" >= %s
@@ -58,13 +59,11 @@ def visitors_since(datetime):
 
 
 def get_current_totp():
-    return totp(settings.TOTP_SECRET, settings.TOTP_TIMESTEP)
+    return totp(settings.TOTP_SECRET, get_time_step())
 
 
 def get_previous_totp():
-    return totp_offset(
-        settings.TOTP_SECRET, settings.TOTP_TIMESTEP, settings.TOTP_TIMESTEP
-    )
+    return totp_offset(settings.TOTP_SECRET, get_time_step(), -get_time_step())
 
 
 def get_join_url():
@@ -119,37 +118,56 @@ def index(request, notifications: dict = None):
     return render(request, "guestbook/index.html", context=context)
 
 
-def join(request, join_code: str = None, visitor_id: int = None):
+def join(request, join_code: str = None):
+    # Check for visitor_id cookie.
+    visitor_id = request.COOKIES.get("visitor_id")
+
     if request.method == "POST":
         # Handle POST.
-        data = request.POST
-        code = data.get("code")
-        name = data.get("name")
-        avatar_url = data.get("avatar_url")
+        code = request.POST.get("code")
         # Check join code against current code for current timestep and next timestep.
         if code == get_current_totp() or code == get_previous_totp():
-            # Validate name.
-            if validate_name(name):
-                # Create and persist visitor.
-                visitor = Visitor(name=name, avatar_url=avatar_url)
-                visitor.save()
-                # Create and persist visit.
-                visit = Visit(visitor=visitor)
-                visit.save()
-                # Redirect to the index page with a welcome notification.
-                context = {
-                    "notifications": [
-                        build_notification("success", "Thanks for visiting!")
-                    ],
-                    **base_context(),
-                }
-                return render(request, "guestbook/index.html", context=context)
+            if visitor_id:
+                visitor = Visitor.objects.get(id=visitor_id)
+                name = visitor.name
+                avatar_id = visitor.avatar_id
             else:
-                context = {
-                    "notifications": [build_notification("error", "Invalid name.")],
-                    **base_context(),
-                }
-                return render(request, "guestbook/join.html", context=context)
+                name = request.POST.get("name")
+                avatar_id = request.POST.get("avatar_id")
+                # Validate name.
+                if validate_name(name):
+                    # Create and persist visitor.
+                    visitor = Visitor(name=name, avatar_id=avatar_id)
+                    visitor.save()
+                else:
+                    # Invalid name.
+                    context = {
+                        "notifications": [build_notification("error", "Invalid name.")],
+                        **base_context(),
+                    }
+                    return render(request, "guestbook/join.html", context=context)
+
+            # Create and persist visit.
+            visit = Visit(visitor=visitor)
+            visit.save()
+            # Redirect to the index page with a welcome notification.
+            context = {
+                "notifications": [
+                    build_notification("success", "Thanks for visiting!")
+                ],
+                **base_context(),
+            }
+            response = render(request, "guestbook/index.html", context=context)
+            # Set a cookie so a user can continue to check in as the same visitor.
+            response.set_cookie(
+                "visitor_id",
+                visitor.id,
+                max_age=(400 * 24 * 60 * 60),  # 400 days.
+                secure=True,
+                httponly=True,
+                samesite="strict",
+            )
+            return response
         else:
             # Invalid code.
             context = {
@@ -162,6 +180,11 @@ def join(request, join_code: str = None, visitor_id: int = None):
     else:
         # Handle GET.
         context = base_context()
+        if visitor_id:
+            # Lookup the user.
+            visitor = Visitor.objects.get(id=visitor_id)
+            context["visitor"] = visitor
+            context["notifications"] = [build_notification("success", "Welcome back!")]
         if join_code:
             context["join_code"] = join_code
         if visitor_id:
@@ -185,23 +208,28 @@ def get_join_code(request):
         return HttpResponse("Unauthorized", status=401)
 
 
-def get_visitors_partial(request):
+def get_visitors_partial(request, ts):
+    time = datetime.fromtimestamp(ts, tz=timezone.utc)
     if request.user.is_superuser and request.user.is_active:
-        todays_visitors = visitors_since(midnight_today())
-        weeks_visitors = visitors_since(midnight_today() - timedelta(days=7))
-        months_visitors = visitors_since(midnight_today() - timedelta(days=30))
-        return render(
-            request,
-            "guestbook/visitors.partial.html",
-            {
-                "visitors": {
-                    "today": todays_visitors,
-                    "week": weeks_visitors,
-                    "month": months_visitors,
+        # Check if there are any new visits. If not, return an empty response.
+        if Visit.objects.filter(visit_datetime__gte=time).first() is not None:
+            todays_visitors = visitors_since(midnight_today())
+            weeks_visitors = visitors_since(midnight_today() - timedelta(days=7))
+            months_visitors = visitors_since(midnight_today() - timedelta(days=30))
+            return render(
+                request,
+                "guestbook/visitors.partial.html",
+                {
+                    "visitors": {
+                        "today": todays_visitors,
+                        "week": weeks_visitors,
+                        "month": months_visitors,
+                    },
+                    **base_context(),
                 },
-                **base_context(),
-            },
-        )
+            )
+        else:
+            return HttpResponse()
     elif request.user.is_authenticated:
         return HttpResponse("Forbidden", status=403)
     else:

@@ -20,7 +20,6 @@ window.onload = async function () {
             }
 
             const json = await response.json();
-            console.log(json.name);
             return json.name;
 
         } catch (error) {

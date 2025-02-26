@@ -388,7 +388,6 @@ def visitor_exists(name: str) -> bool:
             [name],
         )
         result = cursor.fetchone()
-        print(result)
         return result is not None
 
 
@@ -415,11 +414,11 @@ def random_avatars(number: int = 12) -> list[AvatarImage]:
         cursor.execute(
             """SELECT a.id, a.url
                     FROM guestbook_avatarimage a
-                    LEFT JOIN guestbook_visitor v ON a.url = v.avatar_url
+                    LEFT JOIN guestbook_visitor v ON a.id = v.avatar_id
                     WHERE v.id is NULL
                     LIMIT %s""",
             [number],
         )
         result = cursor.fetchall()
         # Process resulting list of tuples into list.
-        return [AvatarImage(tup[0], tup[1]) for tup in result]
+        return [AvatarImage(id=tup[0], url=tup[1]) for tup in result]

@@ -16,9 +16,10 @@ def hotp(key, counter, digits=6, digest="sha1"):
 
 
 def totp(key, time_step=30, digits=6, digest="sha1"):
-    return totp_offset(key, 0, time_step, digits, digest)
+    return totp_offset(key, time_step, 0, digits, digest)
 
 
-def totp_offset(key, offset=-30, time_step=30, digits=6, digest="sha1"):
+def totp_offset(key, time_step=30, offset=-30, digits=6, digest="sha1"):
     """Generate TOTP code from key for any past or future time (use negative offset for past)"""
+    print(f"generate TOTP with offset: {offset}")
     return hotp(key, int((time.time() + offset) / time_step), digits, digest)
