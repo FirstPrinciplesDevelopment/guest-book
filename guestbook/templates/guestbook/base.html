@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'favicon.ico' %}">
     <title>Guest Book</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <script src="{% static 'js/qrcode.min.js' %}"></script>
@@ -18,8 +19,8 @@
     {% for notification in notifications %}
     <div class="toast toast-top toast-center">
         {% if notification.type == "error" %}
-        <div class="alert alert-error">
-            <span class="min-w-48 text-lg">{{notification.message}}</span>
+        <div class="alert alert-error flex">
+            <span class="text-lg justify-center">{{notification.message}}</span>
         </div>
         {% elif notification.type == "success" %}
         <div class="alert alert-success flex">
