@@ -40,7 +40,6 @@ TOTP_TIMESTEP = 30
 # Application definition
 
 INSTALLED_APPS = [
-    "polls.apps.PollsConfig",
     "guestbook.apps.GuestbookConfig",
     "django.contrib.admin",
     "django.contrib.auth",
