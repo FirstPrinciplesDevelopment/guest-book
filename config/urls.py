@@ -18,17 +18,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
-from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     path("", include("guestbook.urls")),
     path("admin/", admin.site.urls),
 ]
 
-if settings.DEBUG:
-    urlpatterns.append(path("__reload__/", include("django_browser_reload.urls")))
+if settings.DEBUG and not settings.TESTING:
+    from debug_toolbar.toolbar import debug_toolbar_urls
 
-if not settings.TESTING:
     urlpatterns = [
+        path("__reload__/", include("django_browser_reload.urls")),
         *urlpatterns,
     ] + debug_toolbar_urls()
