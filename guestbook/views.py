@@ -66,10 +66,6 @@ def get_previous_totp():
     return totp_offset(settings.TOTP_SECRET, get_time_step(), -get_time_step())
 
 
-def get_join_url():
-    return f"{settings.BASE_URL}/join/"
-
-
 def get_time_step():
     return settings.TOTP_TIMESTEP
 
@@ -198,7 +194,7 @@ def get_join_code(request):
             "code": get_current_totp(),
             "step": get_time_step(),
             "remaining": seconds_remaining(),
-            "url": get_join_url(),
+            "url": request.build_absolute_uri("/join/"),
         }
         json_str = json.dumps(data)
         return HttpResponse(json_str, content_type="application/json")
