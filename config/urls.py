@@ -21,7 +21,7 @@ from django.conf import settings
 
 urlpatterns = [
     path("", include("guestbook.urls")),
-    path("admin/", admin.site.urls),
+    path("guestbook-staff/", admin.site.urls),
 ]
 
 if settings.DEBUG and not settings.TESTING:
