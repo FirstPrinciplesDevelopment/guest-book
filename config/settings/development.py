@@ -132,6 +132,9 @@ STATICFILES_DIRS = [
     "static/",
 ]
 
+# https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-STATIC_ROOT
+STATIC_ROOT = os.path.join(BASE_DIR.parent, "static")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

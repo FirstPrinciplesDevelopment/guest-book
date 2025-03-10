@@ -5,19 +5,17 @@ from guestbook.models import AvatarImage
 
 
 class Command(BaseCommand):
-    help = "Processes images for avatars."
+    help = "Processes images for avatars. Should be run after `python manage.py collectstatic`."
 
     def build_url(self, filename):
-        # TODO: update to be whatever the deployed URL will be.
+        # The path where the static files will be served.
         return os.path.join("/static", "guestbook", "images", filename)
 
     def handle(self, *args, **options):
         try:
             # Delete all images.
             AvatarImage.objects.all().delete()
-            image_dir = os.path.join(
-                settings.BASE_DIR, "guestbook", "static", "guestbook", "images"
-            )
+            image_dir = os.path.join(settings.STATIC_ROOT, "guestbook", "images")
             images_processed = 0
             for triple in os.walk(image_dir):
                 # Unpack 3-tuple of dirpath, dirnames, filenames.
