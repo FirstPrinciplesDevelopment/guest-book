@@ -22,8 +22,9 @@
                 <div class="divider">OR</div>
                 <div class="card rounded-box grid h-20 place-items-center">
                     <div class="text-lg mx-auto">
-                        <!-- TODO: remove hard-coded URL. -->
-                        Visit <a href="/join/" class="underline text-secondary">localhost/join</a>
+                        Visit
+                        <a href="/join/" class="underline text-secondary">
+                            {{ request.get_host }}/join</a>
                         and
                         enter
                         <strong id="join-code" class="text-secondary">{{ join_code }}</strong>.
