@@ -22,6 +22,9 @@ jobs:
 
       - name: Copy Source Code
         run: |
+          ls -lah ${GITHUB_WORKSPACE}/
+          ls -lah ${GITHUB_WORKSPACE}/guest-book/
+          # scp -r ${GITHUB_WORKSPACE}/guest-book:${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}/{{ secrets.REMOTE_DIR }}/
           
       - name: Deploy
         run: |
