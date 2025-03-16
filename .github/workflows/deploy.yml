@@ -18,11 +18,14 @@ jobs:
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
+      - name: Copy Source Code
+        run: |
+          
       - name: Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'bash ~/deploy.sh'
+          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'bash ~/deploy.sh'
 
       - name: Clean Up
         run: |
