@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import base64
 import os
 from pathlib import Path
 import sys
@@ -32,7 +33,9 @@ DEBUG = False
 ALLOWED_HOSTS = ["guestbook.top", "www.guestbook.top"]
 
 # Used to generate the join code, should be a random base-32 string.
-TOTP_SECRET = secrets.token_hex(32)
+TOTP_SECRET = base64.b32encode(bytearray(secrets.token_hex(32), "ascii")).decode(
+    "utf-8"
+)
 
 # How often, in seconds, to update the join code.
 TOTP_TIMESTEP = 30
