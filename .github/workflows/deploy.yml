@@ -23,7 +23,7 @@ jobs:
 
       - name: Copy Source Code
         run: |
-          rsync -a -O ${GITHUB_WORKSPACE} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
+          rsync -a -O --no-perms ${GITHUB_WORKSPACE} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
           
       - name: Deploy
         run: |
