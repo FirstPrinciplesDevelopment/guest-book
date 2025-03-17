@@ -23,7 +23,7 @@ jobs:
 
       - name: Copy Source Code
         run: |
-          scp -r -v ${GITHUB_WORKSPACE} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
+          rsync ${GITHUB_WORKSPACE} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
           
       - name: Deploy
         run: |
