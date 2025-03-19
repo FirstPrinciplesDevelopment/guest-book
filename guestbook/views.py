@@ -189,7 +189,7 @@ def join(request, join_code: str = None):
 
 
 def get_join_code(request):
-    if request.user.is_superuser and request.user.is_active:
+    if request.user.is_staff and request.user.is_active:
         data = {
             "code": get_current_totp(),
             "step": get_time_step(),
@@ -206,7 +206,7 @@ def get_join_code(request):
 
 def get_visitors_partial(request, ts):
     time = datetime.fromtimestamp(ts, tz=timezone.utc)
-    if request.user.is_superuser and request.user.is_active:
+    if request.user.is_staff and request.user.is_active:
         # Check if there are any new visits. If not, return an empty response.
         if Visit.objects.filter(visit_datetime__gte=time).first() is not None:
             todays_visitors = visitors_since(midnight_today())
