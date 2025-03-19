@@ -78,7 +78,7 @@ def seconds_remaining(time_step: int = 30, offset: int = 0) -> int:
 
 def base_context():
     # TODO: make location name dynamic.
-    location = "CalsZone"
+    location = "CALS Zone"
     return {"location": location, "avatars": random_avatars()}
 
 
