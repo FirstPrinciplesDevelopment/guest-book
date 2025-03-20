@@ -10,6 +10,8 @@ from guestbook.services.visitors_service import (
     random_avatars,
 )
 
+from guestbook.services.theme_service import get_theme
+
 from .models import Visit, Visitor, AvatarImage
 from .totp import totp, totp_offset
 
@@ -79,7 +81,8 @@ def seconds_remaining(time_step: int = 30, offset: int = 0) -> int:
 def base_context():
     # TODO: make location name dynamic.
     location = "CALS Zone"
-    return {"location": location, "avatars": random_avatars()}
+    theme = get_theme(midnight_today().timetuple().tm_yday)
+    return {"location": location, "avatars": random_avatars(), "theme": theme}
 
 
 def dashboard(request):
