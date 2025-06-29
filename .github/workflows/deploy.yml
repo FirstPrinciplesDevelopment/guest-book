@@ -14,21 +14,21 @@ jobs:
       - name: Check out the repository to the runner
         uses: actions/checkout@v4  
 
-      - name: Configure SSH
-        run: |
-          mkdir ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      # - name: Configure SSH
+      #   run: |
+      #     mkdir ~/.ssh
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+      #     chmod 600 ~/.ssh/id_ed25519
+      #     echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
-      - name: Copy Source Code
-        run: |
-          rsync -a -O --no-perms ${GITHUB_WORKSPACE} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
+      # - name: Copy Source Code
+      #   run: |
+      #     rsync -a -O --no-perms ${GITHUB_WORKSPACE} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
           
-      - name: Deploy
-        run: |
-          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'bash ~/deploy.sh'
+      # - name: Deploy
+      #   run: |
+      #     ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'bash ~/deploy.sh'
 
-      - name: Clean Up
-        run: |
-          rm -rf ~/.ssh
+      # - name: Clean Up
+      #   run: |
+      #     rm -rf ~/.ssh
