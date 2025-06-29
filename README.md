@@ -1,9 +1,3 @@
-# django-daisy
-A template repo for Django projects with [TailwindCSS](https://tailwindcss.com/) and [DaisyUI](https://daisyui.com/).
-
-
-It uses [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/index.html) and [django-browser-reload](https://pypi.org/project/django-browser-reload/) for development.
-
 # Running
 
 Install node dependencies with `cd jsbuild` and `npm install`.
@@ -21,3 +15,8 @@ Collect static files (configure location with the `STATIC_ROOT` setting) with `p
 Put your images in ./guestbook/static/images/ and then run `python manage.py processimages`.
 
 Then run the Django development server as usual `python manage.py runserver`.
+
+____
+
+Built with [FirstPrinciplesDevelopment/django-daisy](https://github.com/FirstPrinciplesDevelopment/django-daisy).
+Uses [TailwindCSS](https://tailwindcss.com/) and [DaisyUI](https://daisyui.com/).
