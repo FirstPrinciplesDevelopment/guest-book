@@ -40,6 +40,9 @@ TOTP_SECRET = base64.b32encode(bytearray(secrets.token_hex(32), "ascii")).decode
 # How often, in seconds, to update the join code.
 TOTP_TIMESTEP = 30
 
+# Location name displayed on dashboard.
+LOCATION_NAME = "Django Workshop"
+
 # Application definition
 
 INSTALLED_APPS = [
